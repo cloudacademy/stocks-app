@@ -1,6 +1,6 @@
 {
-  "name": "Stocks App",
-  "description": "Renders a candlestick chart of a stock's price over time.",
+  "name": "stock-app",
+  "description": "Provides chart of a stock's price over time.",
   "version": "1.0.2",
   "dependencies": {
     "d3-dsv": "^1.0.8",
