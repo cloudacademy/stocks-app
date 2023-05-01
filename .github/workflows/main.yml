@@ -1,12 +1,12 @@
-name: CICD
+name: Build
 
 on:
   push:
     tags:
       - '1.*.*'
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   build:
