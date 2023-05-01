@@ -1,0 +1,40 @@
+version: "3.4"
+services:
+  db:
+    image: cloudacademydevops/stocks-db:v1
+    ports:
+      - 3306:3306
+    networks:
+      stocks:
+
+  api:
+    image: cloudacademydevops/stocks-api:v1
+    ports:
+      - 8080:8080
+    links:
+      - db
+    environment:
+      - DB_CONNSTR=jdbc:mysql://db:3306/stocksdb
+      - DB_USER=root
+      - DB_PASSWORD=fo11owth3wh1t3r4bb1t
+    depends_on:
+      - db
+    networks:
+      stocks:
+
+  frontend:
+    image: cloudacademydevops/stocks-app:v1
+    ports:
+      - 8000:8080
+    links:
+      - api
+    environment:
+      - REACT_APP_APIHOSTPORT=localhost:8080
+    depends_on:
+      - api
+    networks:
+      stocks:
+
+networks:
+  stocks:
+    driver: bridge
