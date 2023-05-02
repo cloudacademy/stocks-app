@@ -4,6 +4,14 @@ services:
     image: cloudacademydevops/stocks-db:v1
     ports:
       - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=fo11owth3wh1t3r4bb1t
+    healthcheck:
+      test: mysql -h127.0.0.1 -uroot -pfo11owth3wh1t3r4bb1t stocks
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     networks:
       stocks:
 
@@ -14,11 +22,12 @@ services:
     links:
       - db
     environment:
-      - DB_CONNSTR=jdbc:mysql://db:3306/stocksdb
+      - DB_CONNSTR=jdbc:mysql://db:3306/stocks
       - DB_USER=root
       - DB_PASSWORD=fo11owth3wh1t3r4bb1t
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       stocks:
 
