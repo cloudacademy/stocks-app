@@ -1,0 +1,5 @@
+# starts container with nginx proxy_pass for the /api/stocks/csv path
+docker run --rm -it --name stock-app --env NGINX_APP_APIHOSTPORT=api.10.0.0.100.nip.io:8000 -p 8080:8080 cloudacademydevops/stocks-app:v2
+
+# starts container without nginx proxy_pass for the /api/stocks/csv path
+docker run --rm -it --name stock-app -p 8080:8080 cloudacademydevops/stocks-app:v2

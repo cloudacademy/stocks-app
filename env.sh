@@ -5,9 +5,15 @@ echo
 echo env.sh script started...
 echo
 
+if [[ ! -z "$NGINX_APP_APIHOSTPORT" ]]; then
+  envsubst `declare -x | sed 's/^declare -x \([^=]*\)=.*/$\1/' | tr -d '\n'` < /tmp/default.conf.template > /etc/nginx/conf.d/default.conf
+fi
+
+echo =======
+cat /etc/nginx/conf.d/default.conf
+echo =======
+
 echo "" > ./env-config.js
-#rm -rf ./env-config.js
-#touch ./env-config.js
 
 # Add assignment 
 echo "window._env_ = {" >> ./env-config.js

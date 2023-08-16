@@ -3,7 +3,8 @@ FROM nginx
 COPY build /usr/share/nginx/html/
 COPY .env /usr/share/nginx/html/
 
-COPY conf/conf.d/default.conf /etc/nginx/conf.d/
+COPY conf/conf.d/default.conf.template /tmp
+COPY conf/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
 COPY env-config.js /usr/share/nginx/html/
 

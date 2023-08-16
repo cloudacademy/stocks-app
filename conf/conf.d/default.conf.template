@@ -1,3 +1,8 @@
+upstream api-backend {
+    server ${NGINX_APP_APIHOSTPORT};
+    keepalive 20;
+}
+
 server {
   listen 8080;
   add_header Cache-Control no-cache;
@@ -7,6 +12,10 @@ server {
     index  index.html index.htm;
     try_files $uri $uri/ /index.html;
     expires -1;
+  }
+
+  location /api/stocks/csv {
+    proxy_pass http://api-backend;
   }
 
   error_page   500 502 503 504  /50x.html;
