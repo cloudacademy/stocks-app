@@ -1,10 +1,7 @@
-upstream api-backend {
-    server ${NGINX_APP_APIHOSTPORT};
-    keepalive 20;
-}
-
 server {
   listen 8080;
+  set $target ${NGINX_APP_APIHOSTPORT};
+
   add_header Cache-Control no-cache;
 
   location / {
@@ -15,7 +12,10 @@ server {
   }
 
   location /api/stocks/csv {
-    proxy_pass http://api-backend;
+    resolver         ${NGINX_DNS_RESOLVER} valid=300s;
+    resolver_timeout 10s;
+
+    proxy_pass http://$target;
   }
 
   error_page   500 502 503 504  /50x.html;
