@@ -1,16 +1,28 @@
-FROM nginx
+FROM nginx:1.20
+
+LABEL io.k8s.description="Platform for serving static HTML files" \
+      io.k8s.display-name="Nginx 1.20"
 
 COPY build /usr/share/nginx/html/
 COPY .env /usr/share/nginx/html/
+COPY env-config.js /usr/share/nginx/html/
 
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/conf.d/default.conf.template /tmp
 COPY conf/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
-COPY env-config.js /usr/share/nginx/html/
+RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html && \
+        chown -R nginx:nginx /var/cache/nginx && \
+        chown -R nginx:nginx /var/log/nginx && \
+        chown -R nginx:nginx /etc/nginx/conf.d
+
+RUN touch /var/run/nginx.pid && \
+        chown -R nginx:nginx /var/run/nginx.pid
 
 COPY env.sh /tmp
 RUN chmod +x /tmp/env.sh
 
+USER nginx
 EXPOSE 8080
 
 CMD ["/bin/bash", "-c", "cd /usr/share/nginx/html && /tmp/env.sh && nginx -g \"daemon off;\""]
