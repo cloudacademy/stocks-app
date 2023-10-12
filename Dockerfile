@@ -1,9 +1,17 @@
+FROM node:16.15-alpine AS builder
+USER node
+RUN mkdir -p /home/node/stocks-app
+WORKDIR /home/node/stocks-app
+COPY --chown=node . .
+RUN yarn install
+RUN yarn build
+
 FROM nginx:1.20
 
 LABEL io.k8s.description="Platform for serving static HTML files" \
       io.k8s.display-name="Nginx 1.20"
 
-COPY build /usr/share/nginx/html/
+COPY --from=builder /home/node/stocks-app/build /usr/share/nginx/html/
 COPY .env /usr/share/nginx/html/
 COPY env-config.js /usr/share/nginx/html/
 
