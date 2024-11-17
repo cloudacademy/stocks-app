@@ -1,9 +1,12 @@
-FROM node:16.15-alpine AS builder
-USER node
-RUN mkdir -p /home/node/stocks-app
-WORKDIR /home/node/stocks-app
-COPY --chown=node . .
-RUN yarn install
+FROM node:20 AS dependencies
+
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN --mount=type=cache,target=/root/.yarn,id=yarn_cache yarn install --cache-folder /root/.yarn
+COPY . .
+
+FROM dependencies AS builder
+
 RUN yarn build
 
 FROM nginx:1.20
@@ -11,7 +14,7 @@ FROM nginx:1.20
 LABEL io.k8s.description="Platform for serving static HTML files" \
       io.k8s.display-name="Nginx 1.20"
 
-COPY --from=builder /home/node/stocks-app/build /usr/share/nginx/html/
+COPY --from=builder /app/build /usr/share/nginx/html/
 COPY .env /usr/share/nginx/html/
 COPY env-config.js /usr/share/nginx/html/
 
@@ -19,13 +22,13 @@ COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/conf.d/default.conf.template /tmp
 COPY conf/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
-RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html && \
-        chown -R nginx:nginx /var/cache/nginx && \
-        chown -R nginx:nginx /var/log/nginx && \
-        chown -R nginx:nginx /etc/nginx/conf.d
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+chmod -R 755 /usr/share/nginx/html && \
+chown -R nginx:nginx /var/cache/nginx && \
+chown -R nginx:nginx /var/log/nginx && \
+chown -R nginx:nginx /etc/nginx/conf.d
 
-RUN touch /var/run/nginx.pid && \
-        chown -R nginx:nginx /var/run/nginx.pid
+RUN touch /var/run/nginx.pid && chown -R nginx:nginx /var/run/nginx.pid
 
 COPY env.sh /tmp
 RUN chmod +x /tmp/env.sh
