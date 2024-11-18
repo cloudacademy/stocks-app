@@ -1,6 +1,12 @@
 pipeline {
     agent any
-    
+
+    environment {
+        DOCKER_BUILDKIT = '1'
+        DOCKER_IMAGE = 'cloudacademydevops/stocks-app'
+        TAG = 'latest'
+    }
+
     tools {
         dockerTool 'docker-latest'
     }
@@ -9,7 +15,7 @@ pipeline {
         stage('Docker Build') {
             agent any
             steps {
-                sh 'docker build -t cloudacademydevops/stocks-app:latest .'
+                sh "docker build -t ${DOCKER_IMAGE}:${TAG} ."
             }
         }
 
@@ -18,7 +24,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                    sh 'docker push cloudacademydevops/stocks-app:latest'
+                    sh "docker push ${DOCKER_IMAGE}:${TAG}"
                 }
             }
         }
