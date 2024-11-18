@@ -2,7 +2,7 @@ FROM node:20 AS dependencies
 
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN --mount=type=cache,target=/root/.yarn,id=yarn_cache yarn install --cache-folder /root/.yarn
+RUN yarn install
 COPY . .
 
 FROM dependencies AS builder
