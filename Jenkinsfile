@@ -15,7 +15,7 @@ pipeline {
         stage('Docker Build') {
             agent any
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${TAG} ."
+                sh "DOCKER_BUILDKIT=1 docker build -t ${DOCKER_IMAGE}:${TAG} ."
             }
         }
 
