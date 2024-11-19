@@ -1,7 +1,6 @@
-version: "3.4"
 services:
   db:
-    image: cloudacademydevops/stocks-db:v1
+    image: cloudacademydevops/stocks-db:latest
     ports:
       - 3306:3306
     environment:
@@ -16,7 +15,7 @@ services:
       stocks:
 
   api:
-    image: cloudacademydevops/stocks-api:v1
+    image: cloudacademydevops/stocks-api:latest
     ports:
       - 8080:8080
     links:
@@ -32,7 +31,7 @@ services:
       stocks:
 
   frontend:
-    image: cloudacademydevops/stocks-app:v1
+    image: cloudacademydevops/stocks-app:latest
     ports:
       - 8000:8080
     links:
