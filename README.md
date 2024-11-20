@@ -26,3 +26,5 @@ The UI container image can be launched using the following commands:
     ```
     docker run --rm -it --name stock-app -p 8080:8080 cloudacademydevops/stocks-app:v2
     ```
+
+v1.0.1
