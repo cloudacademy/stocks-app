@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'cloudacademydevops/stocks-app'
+        TAG = "r${env.BUILD_NUMBER}"
+    }
+
+    tools {
+        dockerTool 'docker-latest'
+    }
+
+    stages {
+        stage('Docker Build') {
+            agent any
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:${TAG} ."
+            }
+        }
+
+        stage('Docker Push') {
+            agent any
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh "docker push ${DOCKER_IMAGE}:${TAG}"
+                }
+            }
+        }
+        
+        stage('Manifest Update') {
+            agent any
+            steps {
+                echo "triggering updatemanifestjob"
+                build job: 'Update Stocks App Manifest', parameters: [string(name: 'DOCKERTAG', value: "${TAG}")]
+            }
+        }
+    }
+}
