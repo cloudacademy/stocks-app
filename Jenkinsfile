@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = 'cloudacademydevops/stocks-app'
+        IMAGE = 'cloudacademydevops.internal/stocks-app'
         TAG = "v1.0.${env.BUILD_NUMBER}"
     }
 
@@ -22,7 +22,7 @@ pipeline {
             agent any
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
-                    sh "docker login nexus:8983 -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh "docker login cloudacademydevops.internal:8983 -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     sh "docker push ${IMAGE}:${TAG}"
                 }
             }
