@@ -21,7 +21,7 @@ pipeline {
         stage('Docker Push') {
             agent any
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
+                withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
                     sh "docker login nexus:8983 -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     sh "docker push ${IMAGE}:${TAG}"
                 }
