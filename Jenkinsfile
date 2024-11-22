@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BUILDKIT = '1'
-        DOCKER_IMAGE = 'cloudacademydevops/stocks-app'
-        TAG = 'latest'
+        IMAGE = 'cloudacademydevops/stocks-app'
+        TAG = "v1.0.${env.BUILD_NUMBER}"
     }
 
     tools {
@@ -15,7 +14,7 @@ pipeline {
         stage('Docker Build') {
             agent any
             steps {
-                sh "export DOCKER_BUILDKIT=1 && docker build -t ${DOCKER_IMAGE}:${TAG} ."
+                sh "docker build -t ${IMAGE}:${TAG} ."
             }
         }
 
@@ -24,8 +23,16 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPassword')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                    sh "docker push ${DOCKER_IMAGE}:${TAG}"
+                    sh "docker push ${IMAGE}:${TAG}"
                 }
+            }
+        }
+        
+        stage('Manifest Update') {
+            agent any
+            steps {
+                echo "triggering update manifest job..."
+                build job: 'Update K8s Manifest File', parameters: [string(name: 'IMAGE', value: "${IMAGE}"), string(name: 'TAG', value: "${TAG}")]
             }
         }
     }
