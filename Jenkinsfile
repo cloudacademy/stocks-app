@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = 'cloudacademydevops.internal/stocks-app'
+        IMAGE = 'cloudacademydevops.internal:8983/stocks-app'
         TAG = "v1.0.${env.BUILD_NUMBER}"
     }
 
