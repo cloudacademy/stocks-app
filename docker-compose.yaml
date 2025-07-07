@@ -1,32 +1,15 @@
 services:
-  db:
-    image: cloudacademydevops/stocks-db:latest
-    ports:
-      - 3306:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=fo11owth3wh1t3r4bb1t
-    healthcheck:
-      test: mysql -h127.0.0.1 -uroot -pfo11owth3wh1t3r4bb1t stocks
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    networks:
-      stocks:
-
   api:
-    image: cloudacademydevops/stocks-api:latest
+    image: cloudacademydevops/stocks-api:snowflake
     ports:
-      - 8080:8080
-    links:
-      - db
+      - 9095:9095
     environment:
-      - DB_CONNSTR=jdbc:mysql://db:3306/stocks
-      - DB_USER=root
-      - DB_PASSWORD=fo11owth3wh1t3r4bb1t
-    depends_on:
-      db:
-        condition: service_healthy
+      - SNOWFLAKE_ACC=${SNOWFLAKE_ACC}
+      - SNOWFLAKE_JAVA_PASSWORD=${SNOWFLAKE_JAVA_PASSWORD}
+      - SNOWFLAKE_JAVA_URL=${SNOWFLAKE_JAVA_URL}
+      - SNOWFLAKE_JAVA_USERNAME=${SNOWFLAKE_JAVA_USERNAME}
+      - SNOWFLAKE_ROLE=${SNOWFLAKE_ROLE}
+      - SNOWFLAKE_WH=${SNOWFLAKE_WH}
     networks:
       stocks:
 
@@ -37,7 +20,7 @@ services:
     links:
       - api
     environment:
-      - REACT_APP_APIHOSTPORT=localhost:8080
+      - REACT_APP_APIHOSTPORT=localhost:9095
     depends_on:
       - api
     networks:
