@@ -14,6 +14,7 @@ pipeline {
         stage('Docker Build') {
             agent any
             steps {
+                sh "sed -i 's|CONTAINER_IMAGE|${IMAGE}:${TAG}|g' ./public/index.html"
                 sh "docker build -t ${IMAGE}:${TAG} ."
             }
         }
