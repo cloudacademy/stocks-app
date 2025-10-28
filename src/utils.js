@@ -18,7 +18,7 @@ const parseDate = timeParse("%Y-%m-%d");
 
 export function getData() {
 	const APIHOSTPORT = `${window._env_.REACT_APP_APIHOSTPORT}`;
-	const promiseMSFT = fetch(`http://${APIHOSTPORT}/api/stocks/csv`)
+	const promiseMSFT = fetch(`//${APIHOSTPORT}/api/stocks/csv`)
 		.then(response => response.text())
 		.then(data => csvParse(data, parseData(parseDate)))
 	return promiseMSFT;
